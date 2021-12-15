@@ -1,0 +1,9 @@
+*.
+.idea
+*.ini
+*.db
+server.py
+client_2.py
+p2_hw1.py
+logs/
+media/
