@@ -395,7 +395,8 @@ class MainTab(QtWidgets.QTabWidget):
                     self.message_screen.addItem(sender)
                     sender.setTextAlignment(0x0002)
                 else:
-                    sender = QtWidgets.QListWidgetItem(f'{text}\n{item.text().capitalize()}: {time.strftime("%H:%M", time.gmtime(stime))}')
+                    sender = QtWidgets.QListWidgetItem(
+                        f'{text}\n{item.text().capitalize()}: {time.strftime("%H:%M", time.gmtime(stime))}')
                     self.message_screen.addItem(sender)
                     sender.setTextAlignment(0x0001)
         else:
@@ -584,7 +585,7 @@ class Window(QtWidgets.QWidget):
             data.append([response['time'], response['message'], 1])
         else:
             self.messages[response['from']] = [[response['time'], response['message'], 1]]
-#====================
+
         try:
             current_item = self.tab_widget.main_tab.contacts_screen.currentItem()
             if current_item.text() == response['from']:
