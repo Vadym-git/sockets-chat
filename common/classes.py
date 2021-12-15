@@ -123,7 +123,6 @@ class Server(Socket):
                     for response in responses:
                         response = responses[response]
                         i.send(self.encode_message(response))
-                        print(self.encode_message(response))
                 self.__server_responses.pop(i)
         except RuntimeError:
             pass
@@ -391,11 +390,13 @@ class MainTab(QtWidgets.QTabWidget):
         if data:
             self.message_screen.clear()
             for stime, text, address in data:
-                sender = QtWidgets.QListWidgetItem(f'{text}\n{time.strftime("%H:%M", time.gmtime(stime))}')
-                self.message_screen.addItem(sender)
                 if address == 0:
+                    sender = QtWidgets.QListWidgetItem(f'{text}\n You: {time.strftime("%H:%M", time.gmtime(stime))}')
+                    self.message_screen.addItem(sender)
                     sender.setTextAlignment(0x0002)
                 else:
+                    sender = QtWidgets.QListWidgetItem(f'{text}\n{item.text().capitalize()}: {time.strftime("%H:%M", time.gmtime(stime))}')
+                    self.message_screen.addItem(sender)
                     sender.setTextAlignment(0x0001)
         else:
             self.message_screen.clear()
@@ -545,7 +546,7 @@ class Window(QtWidgets.QWidget):
                         self.window_socket.port = self._port
                         continue
                     else:
-                        print(error, 1)
+                        self.status_bar.help_text.setText(str(error))
 
                 try:
                     self.window_socket.presence(self._login)
@@ -583,15 +584,15 @@ class Window(QtWidgets.QWidget):
             data.append([response['time'], response['message'], 1])
         else:
             self.messages[response['from']] = [[response['time'], response['message'], 1]]
-
+#====================
         try:
-            if self.tab_widget.main_tab.contacts_screen.currentItem().text() == response['from']:
-                self.tab_widget.main_tab.selection_changed(response['from'])
-        except AttributeError:
-            pass
+            current_item = self.tab_widget.main_tab.contacts_screen.currentItem()
+            if current_item.text() == response['from']:
+                self.tab_widget.main_tab.selection_changed(current_item)
+        except AttributeError as error:
+            print(error, 8)
         image = QtGui.QPixmap(media_f + '/bell.png')
         item = self.tab_widget.main_tab.contacts_screen.findItems(response['from'], QtCore.Qt.MatchFlags())[0]
-        print(item)
         item.setStatusTip('new')
         item.setIcon(image)
         winsound.PlaySound(media_f + '/alert.wav', winsound.SND_FILENAME)
@@ -667,7 +668,6 @@ class SettingsTab(QtWidgets.QTabWidget):
         if self.port_edit.text():
             self.window_obj._port = int(self.port_edit.text())
             port = self.port_edit.text()
-        print(ip, port, login)
         return ip, port
 
 
